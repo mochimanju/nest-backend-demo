@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+
 import { RedisService } from '../redis/redis.service';
+import { KafkaService } from '../kafka/kafka.service';
+
 import { Cat } from './entities/cat.entity';
 import { CreateCatInput } from './dto/create-cat.input';
 import { UpdateCatInput } from './dto/update-cat.input';
@@ -11,8 +14,8 @@ export class CatsService {
   constructor(
     @InjectModel(Cat.name) private readonly catModel: Model<Cat>,
     private readonly redis: RedisService,
+    private readonly kafka: KafkaService,
   ) {}
-
 
   async findAll(): Promise<Cat[]> {
     const cache = await this.redis.get('cats');
@@ -31,11 +34,21 @@ export class CatsService {
     return this.catModel.findById(id);
   }
 
+  // ==========================================
+  // CREATE + CLEAR CACHE + EMIT KAFKA EVENT
+  // ==========================================
   async create(input: CreateCatInput): Promise<Cat> {
     const newCat = await this.catModel.create(input);
 
-    // clear cache หลังสร้างข้อมูลใหม่
+    // Clear cache
     await this.redis.delete('cats');
+
+    // ส่งข้อความไป Kafka topic: message.send
+    await this.kafka.sendMessage({
+      action: 'cat-created',
+      data: newCat,
+      timestamp: new Date(),
+    });
 
     return newCat;
   }
@@ -49,7 +62,7 @@ export class CatsService {
       { new: true },
     );
 
-    await this.redis.delete('cats'); 
+    await this.redis.delete('cats');
 
     return updatedCat;
   }
@@ -57,7 +70,7 @@ export class CatsService {
   async remove(id: string): Promise<Cat | null> {
     const deletedCat = await this.catModel.findByIdAndDelete(id);
 
-    await this.redis.delete('cats'); 
+    await this.redis.delete('cats');
 
     return deletedCat;
   }
