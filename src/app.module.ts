@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -10,7 +8,7 @@ import { CatsModule } from './cats/cats.module';
 
 @Module({
   imports: [
-    // โหลด config จาก .env เพื่อเรียกใช้ process.env
+    // โหลด config จาก .env
     ConfigModule.forRoot(),
 
     // เชื่อมต่อกับ MongoDB ผ่าน Mongoose
@@ -35,8 +33,8 @@ import { CatsModule } from './cats/cats.module';
 
     CatsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 
 export class AppModule {}
