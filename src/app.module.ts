@@ -36,5 +36,4 @@ import { CatsModule } from './cats/cats.module';
   controllers: [],
   providers: [],
 })
-
 export class AppModule {}
