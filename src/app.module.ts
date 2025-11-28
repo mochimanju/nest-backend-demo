@@ -8,13 +8,16 @@ import { CatsModule } from './cats/cats.module';
 
 @Module({
   imports: [
-    // โหลด config จาก .env
+    // โหลด config จาก .env ทำให้ ใช้ ConfigService ดึงค่าได้
     ConfigModule.forRoot(),
 
     // เชื่อมต่อกับ MongoDB ผ่าน Mongoose
     MongooseModule.forRootAsync({
+      // เพื่อให้ใช้ ConfigService ได้ใน useFactory
       imports: [ConfigModule],
+      // ให้ NestJS inject ConfigService เข้ามาใน useFactory
       inject: [ConfigService],
+      // ฟังก์ชันใช้ดึงค่าจาก .env เพื่อตั้งค่า MongoDB
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('MONGODB_URI'),
         dbName: configService.get<string>('MONGODB_DATABASE'),
@@ -26,6 +29,7 @@ import { CatsModule } from './cats/cats.module';
     // ตั้งค่า GraphQL โดยใช้ Apollo Driver
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
+      // อ่านไฟล์ schema GraphQL (.graphql) ทุกไฟล์ในโปรเจค (Schema First)
       typePaths: ['./**/*.graphql'],
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],

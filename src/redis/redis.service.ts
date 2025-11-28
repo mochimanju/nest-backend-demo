@@ -12,7 +12,7 @@ export class RedisService {
     });
   }
 
-  async set(key: string, value: any, expireSeconds?: number) {
+  async set(key: string, value: object, expireSeconds?: number) {
     const data = JSON.stringify(value);
 
     if (expireSeconds) {

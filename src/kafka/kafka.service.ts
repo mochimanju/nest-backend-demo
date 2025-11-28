@@ -20,7 +20,7 @@ export class KafkaService implements OnModuleInit {
     console.log('Kafka Producer connected');
   }
 
-  async sendMessage(value: any) {
+  async sendMessage(value: object) {
     const topic = 'message.send';
 
     const payload = JSON.parse(JSON.stringify(value));
