@@ -23,7 +23,7 @@ import { CatsModule } from './cats/cats.module';
       }),
     }),
 
-    // ตั้งค่า GraphQL โดยใช้ Apollo Driver และกำหนด schema อัตโนมัติ
+    // ตั้งค่า GraphQL โดยใช้ Apollo Driver
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       typePaths: ['./**/*.graphql'],

@@ -34,9 +34,6 @@ export class CatsService {
     return this.catModel.findById(id);
   }
 
-  // ==========================================
-  // CREATE + CLEAR CACHE + EMIT KAFKA EVENT
-  // ==========================================
   async create(input: CreateCatInput): Promise<Cat> {
     const newCat = await this.catModel.create(input);
 
