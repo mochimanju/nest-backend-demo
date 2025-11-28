@@ -1,31 +1,74 @@
+"""
+ข้อมูลของแมว 1 ตัว เช่น ชื่อ, อายุ, สายพันธุ์
+"""
 type Cat {
+  """รหัสประจำตัวของแมว (MongoDB ObjectId)"""
   id: ID!
+
+  """ชื่อของแมว"""
   name: String!
+
+  """อายุของแมวเป็นจำนวนเต็ม"""
   age: Int!
+
+  """สายพันธุ์ของแมว เช่น Persian, Siamese"""
   breed: String!
 }
 
-
+"""
+ข้อมูลที่ใช้ในการสร้างแมวใหม่
+"""
 input CreateCatInput {
+  """ชื่อแมว"""
   name: String!
+
+  """อายุแมว"""
   age: Int!
+
+  """สายพันธุ์แมว"""
   breed: String!
 }
 
+"""
+ข้อมูลที่ใช้สำหรับแก้ไขแมว โดยเลือกแก้เฉพาะส่วนที่ต้องการ
+"""
 input UpdateCatInput {
+  """ไอดีของแมวที่ต้องการแก้ไข"""
   id: ID!
+
+  """ชื่อแมว (optional)"""
   name: String
+
+  """อายุแมว (optional)"""
   age: Int
+
+  """สายพันธุ์แมว (optional)"""
   breed: String
 }
 
+"""
+Query สำหรับดึงข้อมูลแมว
+"""
 type Query {
+
+  """ดึงข้อมูลแมวทั้งหมดในระบบ"""
   getAllCats: [Cat!]!
+
+  """ดึงข้อมูลแมวตามไอดี"""
   getCatById(id: ID!): Cat
 }
 
+"""
+Mutation สำหรับสร้าง, แก้ไข และลบข้อมูลแมว
+"""
 type Mutation {
+
+  """สร้างแมวใหม่"""
   createCat(createCatInput: CreateCatInput!): Cat!
+
+  """อัปเดตข้อมูลแมวตามไอดี"""
   updateCat(updateCatInput: UpdateCatInput!): Cat!
+
+  """ลบแมวออกจากระบบตามไอดี"""
   deleteCat(id: ID!): Cat
 }

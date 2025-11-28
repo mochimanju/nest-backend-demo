@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-
 import { RedisService } from '../redis/redis.service';
 import { KafkaService } from '../kafka/kafka.service';
-
 import { Cat } from './entities/cat.entity';
 import { CreateCatInput } from './dto/create-cat.input';
 import { UpdateCatInput } from './dto/update-cat.input';
@@ -26,7 +24,10 @@ export class CatsService {
     }
 
     const cats = await this.catModel.find();
-    await this.redis.set('cats', cats);
+
+    // ตั้ง expire = 60 วินาที
+    await this.redis.set('cats', cats, 60);
+
     return cats;
   }
 
@@ -53,11 +54,9 @@ export class CatsService {
   async update(input: UpdateCatInput): Promise<Cat | null> {
     const { id, ...updateData } = input;
 
-    const updatedCat = await this.catModel.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true },
-    );
+    const updatedCat = await this.catModel.findByIdAndUpdate(id, updateData, {
+      new: true,
+    });
 
     await this.redis.delete('cats');
 

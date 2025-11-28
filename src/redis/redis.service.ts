@@ -12,8 +12,15 @@ export class RedisService {
     });
   }
 
-  async set(key: string, value: any) {
-    return this.client.set(key, JSON.stringify(value));
+  async set(key: string, value: any, expireSeconds?: number) {
+    const data = JSON.stringify(value);
+
+    if (expireSeconds) {
+      // EX = expire เป็นวินาที
+      return this.client.set(key, data, 'EX', expireSeconds);
+    }
+
+    return this.client.set(key, data);
   }
 
   async get(key: string) {
