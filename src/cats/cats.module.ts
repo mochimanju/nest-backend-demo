@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CatsService } from './cats.service';
 import { CatsResolver } from './cats.resolver';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Cat, CatSchema } from './entities/cat.entity';
+import { Cat, CatSchema } from './database/cat.schema';
 import { RedisModule } from 'src/redis/redis.module';
 import { KafkaModule } from 'src/kafka/kafka.module';
 

@@ -13,7 +13,7 @@ services:
       - mongo-data:/data/db
 
   redis:
-    image: redis:latest
+    image: redis:latest # ใช้ Redis เวอร์ชันล่าสุด
     container_name: redis
     restart: always
     ports:
@@ -28,17 +28,29 @@ services:
     env_file:
       - .env
     environment:
+      # container นี้คือ node หมายเลขอะไร
       KAFKA_NODE_ID: ${KAFKA_NODE_ID}
+      # เป็น broker รับ–ส่ง message
       KAFKA_PROCESS_ROLES: ${KAFKA_PROCESS_ROLES}
+      # ตั้งชื่อ listener และโปรโตคอลที่ใช้สื่อสาร
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: ${KAFKA_LISTENER_SECURITY_PROTOCOL_MAP}
+      # ระบุว่า Kafka จะเปิด port ไหนสำหรับแต่ละ listener
       KAFKA_LISTENERS: ${KAFKA_LISTENERS}
+      # Kafka บอก “ที่อยู่ที่แท้จริง” สำหรับ client ที่จะ connect
       KAFKA_ADVERTISED_LISTENERS: ${KAFKA_ADVERTISED_LISTENERS}
+      # รายชื่อ controller nodes ใน cluster (ใช้แทน Zookeeper)
       KAFKA_CONTROLLER_QUORUM_VOTERS: ${KAFKA_CONTROLLER_QUORUM_VOTERS}
+      # กำหนดว่า controller จะใช้ listener ตัวไหน
       KAFKA_CONTROLLER_LISTENER_NAMES: ${KAFKA_CONTROLLER_LISTENER_NAMES}
+      # เก็บข้อมูลการอ่าน message ของ consumer group cluster เดี่ยว → ต้องเป็น 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: ${KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR}
+      # replication factor สำหรับ topic เก็บข้อมูล transaction ของ Kafka cluster เดี่ยว
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: ${KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR}
+      # จำนวน minimum in-sync replicas สำหรับ topic transaction
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: ${KAFKA_TRANSACTION_STATE_LOG_MIN_ISR}
+      # ให้ Kafka สร้าง topic อัตโนมัติไหมเมื่อมี producer/consumer เรียกใช้ ให้สร้างอัตโนมัติ
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: ${KAFKA_AUTO_CREATE_TOPICS_ENABLE}
+      # ID ของ cluster Kafka ที่รันแบบ KRaft
       CLUSTER_ID: ${CLUSTER_ID}
 
   kafdrop:

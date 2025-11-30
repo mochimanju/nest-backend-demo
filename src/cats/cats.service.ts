@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { RedisService } from '../redis/redis.service';
-import { KafkaService } from '../kafka/kafka.service';
-import { Cat } from './entities/cat.entity';
+import { KafkaService } from '../kafka/kafka.producer.service';
+import { Cat } from './database/cat.schema';
 import { CreateCatInput } from './dto/create-cat.input';
 import { UpdateCatInput } from './dto/update-cat.input';
 
