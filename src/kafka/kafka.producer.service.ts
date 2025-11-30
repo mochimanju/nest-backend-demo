@@ -1,35 +1,55 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Kafka, Producer } from 'kafkajs';
+import { ConfigService } from '@nestjs/config';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class KafkaService implements OnModuleInit {
-  private kafka: Kafka;
   private producer: Producer;
 
-  constructor() {
-    this.kafka = new Kafka({
-      clientId: 'nestjs-app',
-      brokers: ['localhost:29092'], 
+  constructor(private readonly configService: ConfigService) {
+    // ดึง brokers จาก config (.env)
+    const brokers = this.configService.get<string>('KAFKA_BROKERS')?.split(',') ?? [
+      'localhost:29092',
+    ];
+
+    // generate clientId อัตโนมัติ (กันซ้ำ)
+    const clientId = `nestjs-${randomUUID()}`;
+
+    // สร้าง Kafka instance
+    const kafka = new Kafka({
+      clientId,
+      brokers,
     });
 
-    this.producer = this.kafka.producer();
+    this.producer = kafka.producer();
   }
 
+  // เรียกตอน module เริ่มทำงาน
   async onModuleInit() {
     await this.producer.connect();
-    console.log('Kafka Producer connected');
+    console.log('[Kafka] Producer connected');
   }
 
-  async sendMessage(value: object) {
-    const topic = 'message.send';
+  /**
+   * ส่ง Event แบบมาตรฐาน Kafka
+   * topic: cats.events
+   * value: object (จะถูก stringify ให้เอง)
+   */
+  async emit(eventName: string, payload: any) {
+    const topic = 'cats.events'; // topic ของโปรเจกต์แมว
 
-    const payload = JSON.parse(JSON.stringify(value));
+    const message = {
+      event: eventName,
+      data: payload,
+      timestamp: new Date().toISOString(),
+    };
 
     await this.producer.send({
       topic,
-      messages: [{ value: JSON.stringify(payload) }],
+      messages: [{ value: JSON.stringify(message) }],
     });
 
-    console.log(`[Kafka] Sent to ${topic}:`, payload);
+    console.log(`[Kafka] Emit: ${topic}:`, message);
   }
 }
