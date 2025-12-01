@@ -32,8 +32,8 @@ export class CatsService {
   async findAll(): Promise<Cat[]> {
     const cacheKey = 'cats';
 
-    // 1) ลองดึงข้อมูลจาก cache ก่อน
     const cache = await this.redis.get(cacheKey);
+
     if (cache) {
       // ส่ง event log ว่าดึงข้อมูลมาจาก cache
       await this.kafka.emit('getAllCats-from-cache', cache);
@@ -41,13 +41,10 @@ export class CatsService {
       return cache; // คืนค่าทันทีจาก Redis
     }
 
-    // 2) ไม่มี cache → ดึงจากฐานข้อมูล
     const cats = await this.catModel.find();
 
     // เก็บค่าใน Redis 60 วินาที
     await this.redis.set(cacheKey, cats, 60);
-
-    // ส่ง event log ว่าดึงจาก DB จริง
     await this.kafka.emit('getAllCats', cats);
 
     return cats;
@@ -61,7 +58,6 @@ export class CatsService {
   async findOne(id: string): Promise<Cat> {
     const cacheKey = `cat:${id}`;
 
-    // 1) ดึงจาก Redis ก่อน
     const cachedCat = await this.redis.get(cacheKey);
 
     if (cachedCat) {
@@ -70,8 +66,8 @@ export class CatsService {
       return cachedCat;
     }
 
-    // 2) ไม่มี cache → ดึงจาก MongoDB
     const cat = await this.catModel.findOne({ _id: id });
+
     if (!cat) {
       throw new NotFoundException(`ไม่พบแมวที่มี id: ${id}`);
     }
@@ -112,6 +108,7 @@ export class CatsService {
 
     // ตรวจสอบว่ามีแมวนี้จริงหรือไม่
     const existing = await this.catModel.findOne({ _id: id });
+
     if (!existing) {
       throw new NotFoundException(`ไม่พบแมวที่มี id: ${id}`);
     }
@@ -143,6 +140,7 @@ export class CatsService {
   async remove(id: string): Promise<Cat> {
     // ตรวจสอบว่ามีแมวนี้หรือไม่
     const existing = await this.catModel.findOne({ _id: id });
+    
     if (!existing) {
       throw new NotFoundException(`ไม่พบแมวที่มี id: ${id}`);
     }
