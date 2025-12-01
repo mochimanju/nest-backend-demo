@@ -10,9 +10,9 @@ import { UpdateCatInput } from './dto/update-cat.input';
 @Injectable()
 export class CatsService {
   constructor(
-    @InjectModel(Cat.name) private readonly catModel: Model<Cat>, // Inject Model ของ Mongoose
-    private readonly redis: RedisService, // Service สำหรับจัดการ Redis Cache
-    private readonly kafka: KafkaService, // Service สำหรับส่ง Event ไป Kafka
+    @InjectModel(Cat.name) private readonly catModel: Model<Cat>, 
+    private readonly redis: RedisService, 
+    private readonly kafka: KafkaService, 
   ) {}
 
   /**
@@ -36,7 +36,7 @@ export class CatsService {
     const cache = await this.redis.get(cacheKey);
     if (cache) {
       // ส่ง event log ว่าดึงข้อมูลมาจาก cache
-      await this.kafka.emit('getAllCats-from-cache', { source: 'findAll' });
+      await this.kafka.emit('getAllCats-from-cache', cache);
 
       return cache; // คืนค่าทันทีจาก Redis
     }
@@ -66,7 +66,7 @@ export class CatsService {
 
     if (cachedCat) {
       // log event ว่าดึงจาก cache
-      await this.kafka.emit('getCatById-from-cache', { id });
+      await this.kafka.emit('getCatById-from-cache', cachedCat);
       return cachedCat;
     }
 
@@ -128,7 +128,6 @@ export class CatsService {
     }
 
     await this.clearCache(); // เคลียร์ cache list
-    await this.redis.delete(`cat:${id}`); // เคลียร์ cache รายตัว
     await this.kafka.emit('cat-updated', updatedCat); // ส่ง event
 
     return updatedCat;
@@ -156,7 +155,6 @@ export class CatsService {
     }
 
     await this.clearCache(); // ลบ cache list
-    await this.redis.delete(`cat:${id}`); // ลบ cache รายตัว
     await this.kafka.emit('cat-deleted', deletedCat); // ส่ง event
 
     return deletedCat;

@@ -39,7 +39,7 @@ import { KafkaModule } from './kafka/kafka.module';
     
     RedisModule,
     KafkaModule,
-    CatsModule,
+    CatsModule, 
   ],
   controllers: [],
   providers: [],
