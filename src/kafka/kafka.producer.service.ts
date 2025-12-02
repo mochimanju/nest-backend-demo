@@ -9,9 +9,8 @@ export class KafkaService implements OnModuleInit {
 
   constructor(private readonly configService: ConfigService) {
     // ดึง brokers จาก config (.env)
-    const brokers = this.configService.get<string>('KAFKA_BROKERS')?.split(',') ?? [
-      'localhost:29092',
-    ];
+    // Non-null assertion (!) เพราะมั่นใจว่าต้องมีค่า
+    const brokers = this.configService.get<string>('KAFKA_BROKERS')!.split(',');
 
     // generate clientId อัตโนมัติ (กันซ้ำ)
     const clientId = `nestjs-${randomUUID()}`;

@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { KafkaService } from './kafka.producer.service';
 
 @Module({
-  imports: [ConfigModule],
   providers: [KafkaService],
   exports: [KafkaService],
 })

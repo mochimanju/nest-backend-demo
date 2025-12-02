@@ -1,14 +1,20 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 
 @Injectable()
 export class RedisService {
   private client: Redis;
 
-  constructor() {
+  // อ่านค่าการตั้งค่า Redis จาก .env
+  constructor(private readonly configService: ConfigService) {
+    const host = this.configService.get<string>('REDIS_HOST');
+    const port = this.configService.get<number>('REDIS_PORT');
+
+    // สร้างการเชื่อมต่อ (connection) ไปยัง Redis Server 
     this.client = new Redis({
-      host: 'localhost',
-      port: 6379,
+      host,
+      port,
     });
   }
 
@@ -16,7 +22,6 @@ export class RedisService {
     const data = JSON.stringify(value);
 
     if (expireSeconds) {
-      // EX = expire เป็นวินาที
       return this.client.set(key, data, 'EX', expireSeconds);
     }
 

@@ -11,7 +11,9 @@ import { KafkaModule } from './kafka/kafka.module';
 @Module({
   imports: [
     // โหลด config จาก .env ทำให้ ใช้ ConfigService ดึงค่าได้
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true, // ทำให้ใช้ได้ทุก module
+    }),
 
     // เชื่อมต่อกับ MongoDB ผ่าน Mongoose
     MongooseModule.forRootAsync({

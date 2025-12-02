@@ -3,6 +3,7 @@ import { CatsService } from './cats.service';
 import { CreateCatInput } from './dto/create-cat.input';
 import { UpdateCatInput } from './dto/update-cat.input';
 
+// ตัว Resolver สำหรับจัดการ GraphQL requests
 @Resolver('Cat')
 export class CatsResolver {
   constructor(private readonly catsService: CatsService) {}
