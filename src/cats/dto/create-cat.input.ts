@@ -1,4 +1,4 @@
-import { IsString, IsInt, MinLength, Min } from 'class-validator';
+import { IsString, IsInt, MinLength, Min, Max } from 'class-validator';
 
 export class CreateCatInput {
   @IsString()
@@ -7,6 +7,7 @@ export class CreateCatInput {
 
   @IsInt()
   @Min(1) 
+  @Max(30)
   age: number;
 
   @IsString()

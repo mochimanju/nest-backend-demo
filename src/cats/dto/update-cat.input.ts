@@ -11,7 +11,7 @@ export class UpdateCatInput {
 
   @IsOptional()
   @IsInt()
-  @Min(0)
+  @Min(1)
   @Max(30)
   age?: number;
 
