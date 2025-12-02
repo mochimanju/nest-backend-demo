@@ -5,6 +5,7 @@ import { randomUUID } from 'crypto';
 
 @Injectable()
 export class KafkaService implements OnModuleInit {
+  // Kafka producer instance
   private producer: Producer;
 
   constructor(private readonly configService: ConfigService) {
@@ -41,7 +42,7 @@ export class KafkaService implements OnModuleInit {
    * topic: cats.events
    * value: object (จะถูก stringify ให้เอง)
    */
-  async emit(eventName: string, payload: any) {
+  async emit(eventName: string, payload: object) {
     // สร้าง topic สำหรับส่ง event เป็นที่เก็บ event
     const topic = 'cats.events'; 
 

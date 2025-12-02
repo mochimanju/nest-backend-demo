@@ -4,6 +4,7 @@ import Redis from 'ioredis';
 
 @Injectable()
 export class RedisService {
+  // Redis client instance
   private client: Redis;
 
   // อ่านค่าการตั้งค่า Redis จาก .env
