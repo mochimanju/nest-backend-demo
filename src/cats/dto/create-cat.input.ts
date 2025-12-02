@@ -1,4 +1,4 @@
-import { IsString, IsInt, MinLength, Min, Max } from 'class-validator';
+import { IsString, IsInt, MinLength, Min } from 'class-validator';
 
 export class CreateCatInput {
   @IsString()
